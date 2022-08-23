@@ -16,7 +16,8 @@ Python module to read the .D binary data files
     (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 
-from input.input import read_header
+
+from .input.input import read_header
 
 
 def read_data(file_name):
