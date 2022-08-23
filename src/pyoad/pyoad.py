@@ -38,5 +38,8 @@ def read_data(file_name):
 
 
     
-    read_header(file_name)
+    Data = read_header(file_name)
+
+
+    return Data
 
