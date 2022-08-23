@@ -15,3 +15,29 @@ Python module to read the .D binary data files
     GNU General Public License, Version 3
     (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
+
+
+
+
+def read_data():
+    '''
+    This function teads the data from a .D 24 bit binary file
+
+
+    parameters
+    ----------
+        file_name: path to file
+
+    Returns
+    -------
+    Header structure containing the parameters names and values
+
+
+
+    '''
+
+
+    file_name = 'file_name'
+    print(file_name)
+
+    
