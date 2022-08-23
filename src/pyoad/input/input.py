@@ -19,7 +19,7 @@ Python module to read the .D binary data files
 import numpy as np
 
 
-def read_header():
+def read_header(file_name):
     '''
     this function reads the header of a SHRU 24bit .DXX acoustic binary file. 
     
@@ -33,7 +33,6 @@ def read_header():
     '''
 
 
-    file_name = '/Users/gilaverbuch/dev/SignalProcessing/pyOAD/Results/SHRU_programs/SHRU_24bit_example_program/05140537.D21'
 
     #this is the structure of the shru header
     shru_header = np.dtype([

@@ -16,10 +16,10 @@ Python module to read the .D binary data files
     (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 
+from input.input import read_header
 
 
-
-def read_data():
+def read_data(file_name):
     '''
     This function teads the data from a .D 24 bit binary file
 
@@ -37,7 +37,6 @@ def read_data():
     '''
 
 
-    file_name = 'file_name'
-    print(file_name)
-
     
+    read_header(file_name)
+
