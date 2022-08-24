@@ -154,7 +154,7 @@ def read_waveforms(file_name):
     '''
     This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
     So far the functions reads only the first record of the first channel. 
-    Once optimized, the function will read all records of all channels 
+    
     
     parameters
     ----------
@@ -172,14 +172,14 @@ def read_waveforms(file_name):
     l = (len(data_binary[pos:])//128)
     npts = 1048576
 
-    channel1 = np.empty(0, dtype = np.float32)
+    channel1 = []
 
-    for loc in range(pos,l//10, 12):
+    for loc in range(pos,l, 12):
         
         d = bytearray(data_binary[loc:loc+3])
         d.append(0)
         dpoint = int.from_bytes(d, byteorder='big', signed=True) * (2.5/(2**23)/20)
-        channel1 = np.append(channel1, dpoint)
+        channel1.append(dpoint)
 
 
     return channel1
