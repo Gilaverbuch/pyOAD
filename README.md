@@ -1,5 +1,5 @@
 # pyoad
-Python package to read ocean acoustics data from the Ocean Acoustic and Signals Lab (OASL) at Woods Hole Oceanographic Institution (WHOI).
+Python package to .D binary data format from the Ocean Acoustic and Signals Lab (OASL) at Woods Hole Oceanographic Institution (WHOI).
 
 To install run:
 
