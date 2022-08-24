@@ -16,8 +16,17 @@ Python module to read the .D binary data files
     (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 
+import matplotlib.pyplot as plt
+plt.rcParams['font.size'] = '16'
+plt.rcParams['figure.dpi'] = 125
+plt.rcParams['figure.facecolor'] = 'white'
 
-from .input.input import read_header
+import numpy as np
+
+import scipy
+from scipy import signal
+
+from .input.input import read_header, read_waveforms
 
 
 def read_data(file_name):
@@ -39,8 +48,35 @@ def read_data(file_name):
 
 
     
-    Data = read_header(file_name)
+    Header = read_header(file_name)
+    Waveforms = read_waveforms(file_name)
 
 
-    return Data
+    samp_freq = Header['rhfs']
+    dt = 1/samp_freq
+    time = np.arange(0, len(Waveforms)*dt, dt)
+
+    plt.figure(figsize = (15,5))
+    plt.plot(time, Waveforms, 'g')
+    plt.xlabel('Time [sec')
+    plt.ylabel('Pressure []')
+    plt.title('SHRU waveforms')
+    plt.show()
+
+
+    f, t, Sxx = signal.spectrogram(Waveforms, samp_freq, nperseg=int(samp_freq), noverlap=int(samp_freq//2))
+    plt.figure(figsize=(10,5))
+    plt.pcolormesh(t, f, np.log10(Sxx), shading='gouraud')
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    # plt.xlim(10,20)
+    plt.ylim(0,200)
+    # plt.clim(-10, -5)
+    plt.colorbar()
+    plt.xlabel('Time [sec')
+    plt.ylabel('Frequency [Hz]')
+    plt.show()
+
+
+    return Header, Waveforms
 

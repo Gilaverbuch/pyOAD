@@ -142,7 +142,44 @@ def read_header(file_name):
 
                 print(name, string)
 
+    # put header in an xarray object that will later contain also the data. 
+    # it will have a structure of Data['header'] and Data['data']...
 
-    return D[:][0]      
+    return D[:][0]     
 
 
+
+
+def read_waveforms(file_name):
+    '''
+    This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
+    So far the functions reads only the first record of the first channel. 
+    Once optimized, the function will read all records of all channels 
+    
+    parameters
+    ----------
+    file_name: path to file
+
+    Returns
+    -------
+    numpy array with the data
+    '''
+
+    f_data = open(file_name, "rb")  # reopen the file
+    data_binary = f_data.read()
+
+    pos = 1024
+    l = (len(data_binary[pos:])//128)
+    npts = 1048576
+
+    channel1 = np.empty(0, dtype = np.float32)
+
+    for loc in range(pos,l//10, 12):
+        
+        d = bytearray(data_binary[loc:loc+3])
+        d.append(0)
+        dpoint = int.from_bytes(d, byteorder='big', signed=True) * (2.5/(2**23)/20)
+        channel1 = np.append(channel1, dpoint)
+
+
+    return channel1
