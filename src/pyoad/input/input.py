@@ -181,5 +181,6 @@ def read_waveforms(file_name):
         dpoint = int.from_bytes(d, byteorder='big', signed=True) * (2.5/(2**23)/20)
         channel1.append(dpoint)
 
-
+    channel1 = np.asarray(channel1, dtype=np.float32)
+    
     return channel1
