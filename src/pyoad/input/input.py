@@ -17,7 +17,11 @@ Python module to read the .D binary data files
 """
 
 import numpy as np
+import pandas as pd
 
+from scipy import signal
+from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
+from .help_functions import header_info_, read_waveforms_, trace_template_
 
 def read_header(file_name):
     '''
@@ -117,40 +121,42 @@ def read_header(file_name):
                                                      ])
 
     # reading the header
-    D = np.fromfile(file_name, dtype=shru_header)
+    header_raw = np.fromfile(file_name, dtype=shru_header)
+
+    header_df = header_info_(header_raw)
 
 
     # print header 
-    data_type_1 = ['>u2', '>u4', 'uint16', 'uint32', 'int16', 'int32', 'float32']
-    skip_data = ['unused1', 'unused2', 'unused3', 'unused4', 'unused5', 'unused6', 'unused7', 
-                'nav110', 'nav115', 'nav120', 'rhlat', 'rhlng', 'pos' ]
+    # data_type_1 = ['>u2', '>u4', 'uint16', 'uint32', 'int16', 'int32', 'float32']
+    # skip_data = ['unused1', 'unused2', 'unused3', 'unused4', 'unused5', 'unused6', 'unused7', 
+    #             'nav110', 'nav115', 'nav120', 'rhlat', 'rhlng', 'pos' ]
 
-    for name in shru_header.names:
-        if name not in skip_data:
+    # for name in shru_header.names:
+    #     if name not in skip_data:
 
-            if D[name][0].dtype in data_type_1:
+    #         if header_raw[name][0].dtype in data_type_1:
 
-                print(name, D[name][0])
+    #             print(name, header_raw[name][0])
 
-            else:
-                string = 0
-                for c in D[name][0]:
-                    try:
-                        string += chr(c)
-                    except:
-                        string = chr(c)
+    #         else:
+    #             string = 0
+    #             for c in header_raw[name][0]:
+    #                 try:
+    #                     string += chr(c)
+    #                 except:
+    #                     string = chr(c)
 
-                print(name, string)
-
-    # put header in an xarray object that will later contain also the data. 
-    # it will have a structure of Data['header'] and Data['data']...
-
-    return D[:][0]     
+    #             print(name, string)
 
 
+    
+
+    return header_df
 
 
-def read_waveforms(file_name):
+
+
+def read_waveforms(file_name, header_df):
     '''
     This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
     So far the functions reads only the first record of the first channel. 
@@ -165,22 +171,13 @@ def read_waveforms(file_name):
     numpy array with the data
     '''
 
-    f_data = open(file_name, "rb")  # reopen the file
-    data_binary = f_data.read()
+    channel1 = read_waveforms_(file_name)
 
-    pos = 1024
-    l = (len(data_binary[pos:])//128)
-    npts = 1048576
+    tr_template = trace_template_(header_df)
 
-    channel1 = []
+    tr1 = tr_template.copy()
+    tr1.data = channel1
 
-    for loc in range(pos,l, 12):
-        
-        d = bytearray(data_binary[loc:loc+3])
-        d.append(0)
-        dpoint = int.from_bytes(d, byteorder='big', signed=True) * (2.5/(2**23)/20)
-        channel1.append(dpoint)
-
-    channel1 = np.asarray(channel1, dtype=np.float32)
     
-    return channel1
+
+    return tr1
