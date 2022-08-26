@@ -199,50 +199,36 @@ def read_waveforms_(file_name, header_df):
 
     pos = 1024
     l = (len(data_binary[pos:])//128) #divide by the number of records
-    npts = 1048576
+    npts = int(header_df.loc['npts'].values)
 
-    channel1 = []   # Initially save data as python list and not numpy array because .append to list is much much faster.  
-    channel2 = []
-    channel3 = []
-    channel4 = []
+
 
     scaling = (2.5/(2**23)/20)
 
     chan_num = int(header_df.loc['channels'].values)
 
     pos_step = chan_num*3 # every 3 summed into a single data point
-    
+
+    channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
+
     for loc in range(pos,l, pos_step):
-        
-        d1 = bytearray(data_binary[loc:loc+3])
-        d1.append(0)
-        dpoint1 = int.from_bytes(d1, byteorder='big', signed=True) * scaling
-        channel1.append(dpoint1)
 
-        loc = loc+3
-        d2 = bytearray(data_binary[loc:loc+3])
-        d2.append(0)
-        dpoint2 = int.from_bytes(d2, byteorder='big', signed=True) * scaling
-        channel2.append(dpoint2)
+        for c in range(0,chan_num):
 
-        loc = loc+6
-        d3 = bytearray(data_binary[loc:loc+3])
-        d3.append(0)
-        dpoint3 = int.from_bytes(d3, byteorder='big', signed=True) * scaling
-        channel3.append(dpoint3)
+            d = bytearray(data_binary[loc:loc+3])
+            d.append(0)
+            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling
+            channel[c].append(dpoint)
+            loc+=3
 
-        loc = loc+9
-        d4 = bytearray(data_binary[loc:loc+3])
-        d4.append(0)
-        dpoint4 = int.from_bytes(d4, byteorder='big', signed=True) * scaling
-        channel4.append(dpoint4)
 
-    channel1 = np.asarray(channel1, dtype=np.float32)
-    channel2 = np.asarray(channel2, dtype=np.float32)
-    channel3 = np.asarray(channel3, dtype=np.float32)
-    channel4 = np.asarray(channel4, dtype=np.float32)
+    channels = np.empty([chan_num, len(channel[0])], dtype=np.float32)
 
-    return channel1, channel2, channel3, channel4
+    for c in range(0,chan_num):
+        channels[c] = np.asarray(channel[c], dtype=np.float32)
+
+
+    return channels
 
 
 

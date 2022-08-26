@@ -171,26 +171,21 @@ def read_waveforms(file_name, header_df):
     numpy array with the data
     '''
 
-    channel1, channel2, channel3, channel4 = read_waveforms_(file_name, header_df)
-
+    # channel1, channel2, channel3, channel4 = read_waveforms_(file_name, header_df)
+    channels = read_waveforms_(file_name, header_df)
     tr_template = trace_template_(header_df)
 
-    tr1 = tr_template.copy()
-    tr1.stats.station = 'CHN01'
-    tr1.data = channel1
+    chan_num = int(header_df.loc['channels'].values)
 
-    tr2 = tr_template.copy()
-    tr2.stats.station = 'CHN02'
-    tr2.data = channel2
+    stream = Stream()
+    for c in range(0,chan_num):
 
-    tr3 = tr_template.copy()
-    tr3.stats.station = 'CHN03'
-    tr3.data = channel3
+        tr = tr_template.copy()
+        tr.stats.station = 'CHN0'+str(c+1)
+        tr.data = channels[c]
 
-    tr4 = tr_template.copy()
-    tr4.stats.station = 'CHN04'
-    tr4.data = channel4
+        stream = stream + tr
 
-    stream = Stream([tr1, tr2, tr3, tr4])
+
 
     return stream
