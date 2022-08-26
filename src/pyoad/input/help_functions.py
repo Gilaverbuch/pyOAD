@@ -150,7 +150,7 @@ def header_info_(raw_header):
     header_values.append(hla)
 
     header_list = pd.DataFrame(header_values, index=header_list)
-    print(header_list)
+    # print(header_list)
 
     # # print header 
     # data_type_1 = ['>u2', '>u4', 'uint16', 'uint32', 'int16', 'int32', 'float32']
@@ -181,7 +181,7 @@ def header_info_(raw_header):
 
 
 
-def read_waveforms_(file_name):
+def read_waveforms_(file_name, header_df):
     '''
     Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
     
@@ -198,21 +198,51 @@ def read_waveforms_(file_name):
     data_binary = f_data.read()
 
     pos = 1024
-    l = (len(data_binary[pos:])//128)
+    l = (len(data_binary[pos:])//128) #divide by the number of records
     npts = 1048576
 
     channel1 = []   # Initially save data as python list and not numpy array because .append to list is much much faster.  
+    channel2 = []
+    channel3 = []
+    channel4 = []
 
-    for loc in range(pos,l, 12):
+    scaling = (2.5/(2**23)/20)
+
+    chan_num = int(header_df.loc['channels'].values)
+
+    pos_step = chan_num*3 # every 3 summed into a single data point
+    
+    for loc in range(pos,l, pos_step):
         
-        d = bytearray(data_binary[loc:loc+3])
-        d.append(0)
-        dpoint = int.from_bytes(d, byteorder='big', signed=True) * (2.5/(2**23)/20)
-        channel1.append(dpoint)
+        d1 = bytearray(data_binary[loc:loc+3])
+        d1.append(0)
+        dpoint1 = int.from_bytes(d1, byteorder='big', signed=True) * scaling
+        channel1.append(dpoint1)
+
+        loc = loc+3
+        d2 = bytearray(data_binary[loc:loc+3])
+        d2.append(0)
+        dpoint2 = int.from_bytes(d2, byteorder='big', signed=True) * scaling
+        channel2.append(dpoint2)
+
+        loc = loc+6
+        d3 = bytearray(data_binary[loc:loc+3])
+        d3.append(0)
+        dpoint3 = int.from_bytes(d3, byteorder='big', signed=True) * scaling
+        channel3.append(dpoint3)
+
+        loc = loc+9
+        d4 = bytearray(data_binary[loc:loc+3])
+        d4.append(0)
+        dpoint4 = int.from_bytes(d4, byteorder='big', signed=True) * scaling
+        channel4.append(dpoint4)
 
     channel1 = np.asarray(channel1, dtype=np.float32)
+    channel2 = np.asarray(channel2, dtype=np.float32)
+    channel3 = np.asarray(channel3, dtype=np.float32)
+    channel4 = np.asarray(channel4, dtype=np.float32)
 
-    return channel1
+    return channel1, channel2, channel3, channel4
 
 
 
@@ -231,8 +261,8 @@ def trace_template_(header_df):
     '''
 
     tr = Trace()
-    tr.stats.network = 'OA' # Ocean Acoustics
-    tr.stats.station = 'SR' + str(header_df.loc['shru_num'].values[0])
+    tr.stats.network = 'SR' + str(header_df.loc['shru_num'].values[0])
+    # tr.stats.station = 
     tr.stats.channel = 'EDH' #same as IMS for now. check IRIS for more accurate code
     tr.stats.starttime = header_df.loc['starttime'].values[0]
     tr.stats.sampling_rate = header_df.loc['sampling_rate'].values[0]
