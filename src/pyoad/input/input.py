@@ -126,31 +126,6 @@ def read_header(file_name):
     header_df = header_info_(header_raw)
 
 
-    # print header 
-    # data_type_1 = ['>u2', '>u4', 'uint16', 'uint32', 'int16', 'int32', 'float32']
-    # skip_data = ['unused1', 'unused2', 'unused3', 'unused4', 'unused5', 'unused6', 'unused7', 
-    #             'nav110', 'nav115', 'nav120', 'rhlat', 'rhlng', 'pos' ]
-
-    # for name in shru_header.names:
-    #     if name not in skip_data:
-
-    #         if header_raw[name][0].dtype in data_type_1:
-
-    #             print(name, header_raw[name][0])
-
-    #         else:
-    #             string = 0
-    #             for c in header_raw[name][0]:
-    #                 try:
-    #                     string += chr(c)
-    #                 except:
-    #                     string = chr(c)
-
-    #             print(name, string)
-
-
-    
-
     return header_df
 
 

@@ -211,6 +211,7 @@ def read_waveforms_(file_name, header_df):
 
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
 
+    # for loc in range(pos+l*,l*8+pos, pos_step):
     for loc in range(pos,l, pos_step):
 
         for c in range(0,chan_num):

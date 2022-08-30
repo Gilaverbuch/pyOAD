@@ -43,7 +43,6 @@ def read_data(file_name):
     Header structure containing the parameters names and values
 
 
-
     '''
 
 
