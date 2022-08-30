@@ -181,13 +181,15 @@ def header_info_(raw_header):
 
 
 
-def read_waveforms_(file_name, header_df):
+def read_waveforms_(file_name, header_df, record_num):
     '''
     Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
     
     parameters
     ----------
     file_name: numpy fromfile array
+    header_df: header info in a data frame object
+    record_num: record number (out of 128)
 
     Returns
     -------
@@ -211,8 +213,13 @@ def read_waveforms_(file_name, header_df):
 
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
 
-    # for loc in range(pos+l*,l*8+pos, pos_step):
-    for loc in range(pos,l, pos_step):
+    pos1 = pos+l*record_num
+    if record_num==0:
+        pos2 = l
+    else:
+        pos2 = l*(record_num+1)
+    for loc in range(pos1,pos2, pos_step):
+    # for loc in range(pos,l, pos_step):
 
         for c in range(0,chan_num):
 

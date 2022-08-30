@@ -131,35 +131,45 @@ def read_header(file_name):
 
 
 
-def read_waveforms(file_name, header_df):
+def read_waveforms(file_name, header_df, records_range):
     '''
     This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
+    One SHRU file nominally contains 128 records, specify a record number 
     So far the functions reads only the first record of the first channel. 
     
     
     parameters
     ----------
     file_name: path to file
+    header_df: header info in a data frame object
+    records_range: range of record sections to extract
 
     Returns
     -------
     numpy array with the data
     '''
 
-    # channel1, channel2, channel3, channel4 = read_waveforms_(file_name, header_df)
-    channels = read_waveforms_(file_name, header_df)
+    
     tr_template = trace_template_(header_df)
+    num_points = int(header_df.loc['npts'].values)
+    dt = float(header_df.loc['delta'].values)
 
     chan_num = int(header_df.loc['channels'].values)
 
     stream = Stream()
-    for c in range(0,chan_num):
 
-        tr = tr_template.copy()
-        tr.stats.station = 'CHN0'+str(c+1)
-        tr.data = channels[c]
+    for rec_num in records_range:
+        print('record section number',rec_num)
+        channels = read_waveforms_(file_name, header_df, rec_num)
 
-        stream = stream + tr
+        for c in range(0,chan_num):
+
+            tr = tr_template.copy()
+            tr.stats.starttime = tr.stats.starttime+ num_points*dt*rec_num
+            tr.stats.station = 'CHN0'+str(c+1)
+            tr.data = channels[c]
+
+            stream = stream + tr
 
 
 
