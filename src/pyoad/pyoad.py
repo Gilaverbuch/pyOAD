@@ -27,7 +27,7 @@ import pandas as pd
 from scipy import signal
 from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
 from .input.input import read_header_24bit, read_waveforms_24bit
-
+from .output.output import save2mseed_
 
 def read_data_24bit(file_name, records_range):
     '''
@@ -37,7 +37,7 @@ def read_data_24bit(file_name, records_range):
     parameters
     ----------
         file_name: path to file
-        records_range : range of record sections to extact
+        records_range: range of record sections to extact
 
     Returns
     -------
@@ -55,4 +55,24 @@ def read_data_24bit(file_name, records_range):
 
 
     return Header, Waveforms
+
+def save2mseed(waveforms, dir_name='./Results/'):
+    '''
+    This function teads the data from a .D 24 bit binary file
+
+
+    parameters
+    ----------
+        waveforms: obspy strem 
+        dir_name: name of directory to save to
+
+    Returns
+    -------
+    Nothing
+
+
+    '''
+
+    save2mseed_(waveforms, dir_name)
+
 
