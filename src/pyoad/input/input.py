@@ -21,9 +21,9 @@ import pandas as pd
 
 from scipy import signal
 from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
-from .help_functions import header_info_, read_waveforms_, trace_template_
+from .help_functions_in import header_info_, read_waveforms_, trace_template_
 
-def read_header(file_name):
+def read_header_24bit(file_name):
     '''
     this function reads the header of a SHRU 24bit .DXX acoustic binary file. 
     
@@ -131,7 +131,7 @@ def read_header(file_name):
 
 
 
-def read_waveforms(file_name, header_df, records_range):
+def read_waveforms_24bit(file_name, header_df, records_range):
     '''
     This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
     One SHRU file nominally contains 128 records, specify a record number 

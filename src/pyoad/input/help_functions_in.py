@@ -150,32 +150,7 @@ def header_info_(raw_header):
     header_values.append(hla)
 
     header_list = pd.DataFrame(header_values, index=header_list)
-    # print(header_list)
 
-    # # print header 
-    # data_type_1 = ['>u2', '>u4', 'uint16', 'uint32', 'int16', 'int32', 'float32']
-    # skip_data = ['unused1', 'unused2', 'unused3', 'unused4', 'unused5', 'unused6', 'unused7', 
-    #             'nav110', 'nav115', 'nav120', 'rhlat', 'rhlng', 'pos' ]
-
-    # for name in shru_header.names:
-    #     if name not in skip_data:
-
-    #         if raw_header[name][0].dtype in data_type_1:
-
-    #             print(name, raw_header[name][0])
-
-    #         else:
-    #             string = 0
-    #             for c in raw_header[name][0]:
-    #                 try:
-    #                     string += chr(c)
-    #                 except:
-    #                     string = chr(c)
-
-    #             print(name, string)
-
-    # put header in an xarray object that will later contain also the data. 
-    # it will have a structure of Data['header'] and Data['data']...
 
     return header_list
 
@@ -257,7 +232,7 @@ def trace_template_(header_df):
     tr = Trace()
     tr.stats.network = 'SR' + str(header_df.loc['shru_num'].values[0])
     # tr.stats.station = 
-    tr.stats.channel = 'EDH' #same as IMS for now. check IRIS for more accurate code
+    tr.stats.channel = 'FDH' #same as IMS for now. check IRIS for more accurate code
     tr.stats.starttime = header_df.loc['starttime'].values[0]
     tr.stats.sampling_rate = header_df.loc['sampling_rate'].values[0]
     tr.stats.delta = header_df.loc['delta'].values[0]
