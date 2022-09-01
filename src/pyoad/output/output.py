@@ -32,7 +32,8 @@ def save2mseed_(waveforms, dir_name):
         y = str(tr.stats.starttime.year)+'/'
         n = tr.stats.network+'/'
         s = tr.stats.station+'/'
-        name = tr.id + str(tr.stats.starttime.year) +'.'+ str(tr.stats.starttime.julday)
+        name = tr.id + '.'+str(tr.stats.starttime.year) + '.'+ str(tr.stats.starttime.julday) + \
+        '.'+ str(tr.stats.starttime.hour) + '.'+ str(tr.stats.starttime.minute) + '.'+ str(tr.stats.starttime.second) 
         fname = r+y+n+s+name
         
 

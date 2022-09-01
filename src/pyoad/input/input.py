@@ -159,17 +159,23 @@ def read_waveforms_24bit(file_name, header_df, records_range):
     stream = Stream()
 
     for rec_num in records_range:
-        print('record section number',rec_num)
+
         channels = read_waveforms_(file_name, header_df, rec_num)
+        stream_ = Stream()
 
         for c in range(0,chan_num):
 
             tr = tr_template.copy()
-            tr.stats.starttime = tr.stats.starttime+ num_points*dt*rec_num
+            tr.stats.starttime = tr.stats.starttime + num_points*dt*rec_num
             tr.stats.station = 'CHN0'+str(c+1)
             tr.data = channels[c]
 
             stream = stream + tr
+            stream_ = stream_ + tr
+
+
+        # save2mseed(stream_)
+
 
 
 

@@ -188,11 +188,16 @@ def read_waveforms_(file_name, header_df, record_num):
 
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
 
-    pos1 = pos+l*record_num
+    
     if record_num==0:
+        pos1 = pos
         pos2 = l
     else:
-        pos2 = l*(record_num+1)
+        skip = l-pos
+        pos1 = pos + skip*record_num 
+        pos2 = l + skip*record_num   
+
+    print(pos1, pos2)
     for loc in range(pos1,pos2, pos_step):
     # for loc in range(pos,l, pos_step):
 
@@ -232,7 +237,7 @@ def trace_template_(header_df):
     tr = Trace()
     tr.stats.network = 'SR' + str(header_df.loc['shru_num'].values[0])
     # tr.stats.station = 
-    tr.stats.channel = 'FDH' #same as IMS for now. check IRIS for more accurate code
+    tr.stats.channel = 'FDH' # 
     tr.stats.starttime = header_df.loc['starttime'].values[0]
     tr.stats.sampling_rate = header_df.loc['sampling_rate'].values[0]
     tr.stats.delta = header_df.loc['delta'].values[0]
