@@ -15,6 +15,11 @@ Python module to read the .D binary data files
     GNU General Public License, Version 3
     (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
+import matplotlib.pyplot as plt
+plt.rcParams['font.size'] = '16'
+plt.rcParams['figure.dpi'] = 125
+plt.rcParams['figure.facecolor'] = 'white'
+
 
 import numpy as np
 import pandas as pd
@@ -61,6 +66,11 @@ def header_info_(raw_header):
     num_points = raw_header['npts'][0]
     header_list.append('npts')
     header_values.append(num_points)
+
+    # reclen
+    reclen = raw_header['reclen'][0]
+    header_list.append('reclen')
+    header_values.append(reclen)
 
     # sampling rate
     header_list.append('sampling_rate')
@@ -149,6 +159,7 @@ def header_info_(raw_header):
     header_list.append('hla')
     header_values.append(hla)
 
+
     header_list = pd.DataFrame(header_values, index=header_list)
 
 
@@ -175,9 +186,8 @@ def read_waveforms_(file_name, header_df, record_num):
     data_binary = f_data.read()
 
     pos = 1024
-    l = (len(data_binary[pos:])//128) #divide by the number of records
+    l = int(header_df.loc['reclen'].values) #(len(data_binary[pos:])//128) #divide by the number of records
     npts = int(header_df.loc['npts'].values)
-
 
 
     scaling = (2.5/(2**23)/20)
@@ -188,18 +198,17 @@ def read_waveforms_(file_name, header_df, record_num):
 
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
 
-    
+    skip = l-pos
+
     if record_num==0:
         pos1 = pos
-        pos2 = l
+        pos2 = pos1+l -pos
     else:
-        skip = l-pos
-        pos1 = pos + skip*record_num 
-        pos2 = l + skip*record_num   
+        
+        pos1 = pos + l*record_num 
+        pos2 = pos1+l  -pos
 
-    print(pos1, pos2)
     for loc in range(pos1,pos2, pos_step):
-    # for loc in range(pos,l, pos_step):
 
         for c in range(0,chan_num):
 
@@ -210,9 +219,11 @@ def read_waveforms_(file_name, header_df, record_num):
             loc+=3
 
 
-    channels = np.empty([chan_num, len(channel[0])], dtype=np.float32)
+    channels = np.zeros([chan_num, len(channel[0])], dtype=np.float32)
+
 
     for c in range(0,chan_num):
+        
         channels[c] = np.asarray(channel[c], dtype=np.float32)
 
 

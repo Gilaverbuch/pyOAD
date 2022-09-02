@@ -18,6 +18,7 @@ Python module to read the .D binary data files
 
 import numpy as np
 import os
+from tqdm import tqdm
 from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
 # from .help_functions_out import 
 
@@ -25,8 +26,8 @@ from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
 def save2mseed_(waveforms, dir_name):
 
 
-
-    for tr in waveforms:
+    print('Writing to MSEED...')
+    for tr in tqdm(waveforms):
 
         r = dir_name
         y = str(tr.stats.starttime.year)+'/'
