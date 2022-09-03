@@ -47,37 +47,37 @@ def save2mseed_(waveforms, dir_name):
         n = tr.stats.network+'/'
         s = tr.stats.station+'/'
         name = tr.id + '.'+str(tr.stats.starttime.year) + '.'+ str(tr.stats.starttime.julday) + \
-        '.'+ str(tr.stats.starttime.hour) + '.'+ str(tr.stats.starttime.minute) + '.'+ str(tr.stats.starttime.second) 
+        '.'+ str(tr.stats.starttime.hour).zfill(2) + '.'+ str(tr.stats.starttime.minute) + '.'+ str(tr.stats.starttime.second) 
         fname = r+y+n+s+name
         
 
 
         try:
-            tr.write(fname, format="MSEED")  
-            
+            tr.write(fname, format="MSEED") 
+
         except:
             
             if os.path.exists(r+y+n+s)==True:
                 tr.write(fname, format="MSEED") 
-                print('saving file')
+                # print('saving file')
             
             elif os.path.exists(r+y+n)==True:
                 os.mkdir(r+y+n+s)
                 tr.write(fname, format="MSEED")  
-                print('creating station directory')
+                # print('creating station directory')
 
             elif os.path.exists(r+y)==True:
                 os.mkdir(r+y+n)
                 os.mkdir(r+y+n+s)
                 tr.write(fname, format="MSEED")  
-                print('creating network + station directories')
+                # print('creating network + station directories')
 
             elif os.path.exists(r)==True:
                 os.mkdir(r+y)
                 os.mkdir(r+y+n)
                 os.mkdir(r+y+n+s)
                 tr.write(fname, format="MSEED")  
-                print('creating year + network + station directories')
+                # print('creating year + network + station directories')
 
             else:
                 os.mkdir(r)
@@ -85,5 +85,5 @@ def save2mseed_(waveforms, dir_name):
                 os.mkdir(r+y+n)
                 os.mkdir(r+y+n+s)
                 tr.write(fname, format="MSEED")  
-                print('creating Results + year + network + station directories')
+                # print('creating Results + year + network + station directories')
 

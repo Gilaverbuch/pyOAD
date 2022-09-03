@@ -24,7 +24,7 @@ plt.rcParams['figure.facecolor'] = 'white'
 import numpy as np
 import pandas as pd
 
-from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
+from obspy import read_inventory, read, UTCDateTime, Stream, Trace
 from .input.input import read_header_24bit, read_waveforms_24bit
 from .output.output import save2mseed_
 
@@ -77,7 +77,8 @@ def save2mseed(waveforms, dir_name='./Results/'):
     parameters
     ----------
         waveforms: obspy strem 
-        dir_name: name of directory to save to
+        dir_name: directory to save the data to in a year/network/station structure. 
+                  default directory is /Results/
 
     Returns
     -------

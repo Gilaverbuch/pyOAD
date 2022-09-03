@@ -6,6 +6,7 @@ Dependencies:
 - Numpy
 - Matplotlib
 - Jupyter Notebook
+- Pandas
 - Xarray
 - Obspy
 - tqdm

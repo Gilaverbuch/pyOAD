@@ -191,6 +191,7 @@ def read_waveforms_(file_name, header_df, record_num):
 
 
     scaling = (2.5/(2**23)/20)
+    sensitivity = 10**(170/20)
 
     chan_num = int(header_df.loc['channels'].values)
 
@@ -213,8 +214,8 @@ def read_waveforms_(file_name, header_df, record_num):
         for c in range(0,chan_num):
 
             d = bytearray(data_binary[loc:loc+3])
-            d.append(0)
-            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling
+            # d.append(0)
+            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity
             channel[c].append(dpoint)
             loc+=3
 
