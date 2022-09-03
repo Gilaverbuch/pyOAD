@@ -185,8 +185,8 @@ def read_waveforms_(file_name, header_df, record_num):
     f_data = open(file_name, "rb")  # reopen the file
     data_binary = f_data.read()
 
-    pos = 1024
-    l = int(header_df.loc['reclen'].values) #(len(data_binary[pos:])//128) #divide by the number of records
+    pos = 1024  #skip the length of the header
+    l = int(header_df.loc['reclen'].values) #record length
     npts = int(header_df.loc['npts'].values)
 
 
@@ -202,11 +202,11 @@ def read_waveforms_(file_name, header_df, record_num):
 
     if record_num==0:
         pos1 = pos
-        pos2 = pos1+l -pos
+        pos2 = pos1 + l - pos
     else:
         
         pos1 = pos + l*record_num 
-        pos2 = pos1+l  -pos
+        pos2 = pos1 + l - pos
 
     for loc in range(pos1,pos2, pos_step):
 
