@@ -5,9 +5,10 @@ Dependencies:
 
 - Numpy
 - Matplotlib
-- Jupyter notebook
+- Jupyter Notebook
 - Xarray
 - Obspy
+- tqdm
 
 
 To install run:

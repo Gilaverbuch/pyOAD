@@ -24,7 +24,6 @@ plt.rcParams['figure.facecolor'] = 'white'
 import numpy as np
 import pandas as pd
 
-from scipy import signal
 from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
 from .input.input import read_header_24bit, read_waveforms_24bit
 from .output.output import save2mseed_
