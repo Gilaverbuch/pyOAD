@@ -20,8 +20,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from scipy import signal
-from obspy import read_inventory, read, signal, UTCDateTime, Stream, Trace
+from obspy import read_inventory, read,  UTCDateTime, Stream, Trace
 from .help_functions_in import header_info_, read_waveforms_, trace_template_
 
 def read_header_24bit(file_name):
@@ -159,7 +158,7 @@ def read_waveforms_24bit(file_name, header_df, records_range):
 
     stream = Stream()
 
-    print('Reading waveforms...')
+    print('Reading waveform records...')
     for rec_num in tqdm(records_range):
 
         channels = read_waveforms_(file_name, header_df, rec_num)

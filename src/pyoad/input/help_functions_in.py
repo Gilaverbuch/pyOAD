@@ -195,7 +195,12 @@ def read_waveforms_(file_name, header_df, record_num):
 
     chan_num = int(header_df.loc['channels'].values)
 
-    pos_step = chan_num*3 # every 3 summed into a single data point
+    if header_df.loc['shru_num'].values==905:
+        byte_step = 3
+    else:
+        byte_step = 2
+
+    pos_step = chan_num*byte_step # every 3 summed into a single data point
 
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
 
@@ -213,11 +218,11 @@ def read_waveforms_(file_name, header_df, record_num):
 
         for c in range(0,chan_num):
 
-            d = bytearray(data_binary[loc:loc+3])
+            d = bytearray(data_binary[loc:loc+byte_step])
             # d.append(0)
             dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity
             channel[c].append(dpoint)
-            loc+=3
+            loc+=byte_step
 
 
     channels = np.zeros([chan_num, len(channel[0])], dtype=np.float32)
