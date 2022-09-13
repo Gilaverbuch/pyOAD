@@ -176,7 +176,7 @@ def header_info_(raw_header):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms_905_(file_name, header_df, record_num):
+def read_waveforms_24bit_(file_name, header_df, record_num):
     '''
     Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
     
@@ -242,9 +242,9 @@ def read_waveforms_905_(file_name, header_df, record_num):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms_910917_(file_name, header_df, record_num):
+def read_waveforms_16bit_(file_name, header_df, record_num):
     '''
-    Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
+    Help function that reads the waveforms of a SHRU 16bit .DXX acoustic binary file.
     
     parameters
     ----------
@@ -264,31 +264,18 @@ def read_waveforms_910917_(file_name, header_df, record_num):
     l = int(header_df.loc['reclen'].values) #record length
     npts = int(header_df.loc['npts'].values)
 
-
-    
-
-    mPa_2_Pa = 1e-3
-
     chan_num = int(header_df.loc['channels'].values)
-
-    if header_df.loc['shru_num'].values==905:
-
-        byte_step = 3
-        scaling = (2.5/(2**23)/20)
-        sensitivity = 10**(170/20)
-
-    elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
-
-        byte_step = 2
-        scaling = (2.5/8192/20)
-        sensitivity = 10**(170/20)
-
+    byte_step = 2
     pos_step = chan_num*byte_step # every 3 summed into a single data point
 
+    
+    scaling = (2.5/8192/20)
+    sensitivity = 10**(170/20)
+    mPa_2_Pa = 1e-3
+    
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
 
     skip = l-pos
-
     if record_num==0:
         pos1 = pos
         pos2 = pos1 + l - pos
@@ -303,7 +290,14 @@ def read_waveforms_910917_(file_name, header_df, record_num):
 
             d = bytearray(data_binary[loc:loc+byte_step])
             # d.append(0)
-            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity * mPa_2_Pa
+            dpoint = int.from_bytes(d, byteorder='big', signed=True) 
+            
+            #following Keith's code
+            dpoint = dpoint/4
+            mantissa = np.floor(dpoint)
+            gain = 4*(dpoint - mantissa)
+            gain = 2**(3*gain)
+            dpoint = (dpoint/gain) * scaling * sensitivity * mPa_2_Pa
             channel[c].append(dpoint)
             loc+=byte_step
 

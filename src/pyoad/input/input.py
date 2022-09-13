@@ -21,7 +21,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from obspy import read_inventory, read,  UTCDateTime, Stream, Trace
-from .help_functions_in import header_info_, read_waveforms_905_, trace_template_
+from .help_functions_in import header_info_, read_waveforms_24bit_, read_waveforms_16bit_, trace_template_
 
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
@@ -165,11 +165,11 @@ def read_waveforms(file_name, header_df, records_range):
 
     if header_df.loc['shru_num'].values==905:
 
-        read_waveforms_ = read_waveforms_905_
+        read_waveforms_ = read_waveforms_24bit_
 
     elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
 
-        read_waveforms_ = read_waveforms_905_
+        read_waveforms_ = read_waveforms_16bit_
 
     print('Reading waveforms - shru', int(header_df.loc['shru_num'].values))
     for rec_num in tqdm(records_range):
