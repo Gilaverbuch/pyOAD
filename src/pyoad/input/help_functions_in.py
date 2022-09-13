@@ -289,15 +289,15 @@ def read_waveforms_16bit_(file_name, header_df, record_num):
         for c in range(0,chan_num):
 
             d = bytearray(data_binary[loc:loc+byte_step])
-            # d.append(0)
             dpoint = int.from_bytes(d, byteorder='big', signed=True) 
             
-            #following Keith's code
-            dpoint = dpoint/4
-            mantissa = np.floor(dpoint)
-            gain = 4*(dpoint - mantissa)
-            gain = 2**(3*gain)
-            dpoint = (dpoint/gain) * scaling * sensitivity * mPa_2_Pa
+            ## following Keith's code
+            # dpoint = dpoint/4
+            # mantissa = np.floor(dpoint)
+            # gain = 4*(dpoint - mantissa)
+            # gain = 2**(3*gain)
+            # dpoint = (dpoint/gain) * scaling * sensitivity * mPa_2_Pa
+
             channel[c].append(dpoint)
             loc+=byte_step
 
@@ -309,7 +309,12 @@ def read_waveforms_16bit_(file_name, header_df, record_num):
         
         channels[c] = np.asarray(channel[c], dtype=np.float32)
 
-
+    ## following Keith's code faster version
+    channels = channels/4
+    mantissa = np.floor(channels)
+    gain = 4*(channels - mantissa)
+    gain = 2**(3*gain)
+    channels = (channels/gain) * scaling * sensitivity * mPa_2_Pa
 
     return channels
 
