@@ -25,13 +25,13 @@ import numpy as np
 import pandas as pd
 
 from obspy import read_inventory, read, UTCDateTime, Stream, Trace
-from .input.input import read_header_24bit, read_waveforms_24bit
+from .input.input import read_header, read_waveforms
 from .output.output import save2mseed_
 
 
 
 
-def read_data_24bit(file_name, records_range):
+def read_data(file_name, records_range):
     '''
     This function teads the data from a .D 24 bit binary file
 
@@ -50,8 +50,8 @@ def read_data_24bit(file_name, records_range):
 
 
     
-    Header = read_header_24bit(file_name)
-    Waveforms = read_waveforms_24bit(file_name, Header, records_range)
+    Header = read_header(file_name)
+    Waveforms = read_waveforms(file_name, Header, records_range)
 
 
 

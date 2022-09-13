@@ -190,15 +190,23 @@ def read_waveforms_(file_name, header_df, record_num):
     npts = int(header_df.loc['npts'].values)
 
 
-    scaling = (2.5/(2**23)/20)
-    sensitivity = 10**(170/20)
+    
+
+    mPa_2_Pa = 1e-3
 
     chan_num = int(header_df.loc['channels'].values)
 
     if header_df.loc['shru_num'].values==905:
+
         byte_step = 3
-    else:
+        scaling = (2.5/(2**23)/20)
+        sensitivity = 10**(170/20)
+
+    elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
+
         byte_step = 2
+        scaling = (2.5/8192/20)
+        sensitivity = 10**(170/20)
 
     pos_step = chan_num*byte_step # every 3 summed into a single data point
 
@@ -220,7 +228,7 @@ def read_waveforms_(file_name, header_df, record_num):
 
             d = bytearray(data_binary[loc:loc+byte_step])
             # d.append(0)
-            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity
+            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity * mPa_2_Pa
             channel[c].append(dpoint)
             loc+=byte_step
 
@@ -231,6 +239,38 @@ def read_waveforms_(file_name, header_df, record_num):
     for c in range(0,chan_num):
         
         channels[c] = np.asarray(channel[c], dtype=np.float32)
+
+
+
+
+    # if header_df.loc['shru_num'].values==905:
+
+    #     byte_step = 3
+    #     scaling = (2.5/(2**23)/20)
+    #     sensitivity = 10**(170/20)
+
+    #     channels = channels * scaling * sensitivity * mPa_2_Pa
+
+    # elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
+
+    #     byte_step = 2
+    #     scaling = (2.5/8192/20)
+    #     sensitivity = 10**(170/20)
+
+    # # data=data/4;
+    # # gain=4*(data-floor(data));        % mant=floor(data);   "floor" is required due to the nature of negative binary numbers 
+    # # gain=(2*(ones(length(chns),spts))).^(3*gain);        % exp=gain;
+    # # data=floor(data)./gain;
+    # # resol=1./gain; 
+
+    #     channels = channels/4
+    #     gain1 = 4 * (channels - np.floor(channel))
+    #     gain2 =( np.ones(channel.shape) * 2 )**(3*gain1)
+    #     channels = channels/gain2
+
+
+    #     channels = channels * scaling * sensitivity * mPa_2_Pa
+
 
 
     return channels
@@ -260,6 +300,7 @@ def trace_template_(header_df):
     tr.stats.delta = header_df.loc['delta'].values[0]
     tr.stats.npts = header_df.loc['npts'].values[0]
     tr.stats.calib = 1
+    tr.stats.units = 'Pa'
 
     return tr
 

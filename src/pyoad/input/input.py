@@ -23,7 +23,7 @@ from tqdm import tqdm
 from obspy import read_inventory, read,  UTCDateTime, Stream, Trace
 from .help_functions_in import header_info_, read_waveforms_, trace_template_
 
-def read_header_24bit(file_name):
+def read_header(file_name):
     '''
     this function reads the header of a SHRU 24bit .DXX acoustic binary file. 
     
@@ -122,7 +122,6 @@ def read_header_24bit(file_name):
 
     # reading the header
     header_raw = np.fromfile(file_name, dtype=shru_header)
-
     header_df = header_info_(header_raw)
 
 
@@ -131,7 +130,7 @@ def read_header_24bit(file_name):
 
 
 
-def read_waveforms_24bit(file_name, header_df, records_range):
+def read_waveforms(file_name, header_df, records_range):
     '''
     This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
     One SHRU file nominally contains 128 records, specify a record number 
@@ -158,7 +157,7 @@ def read_waveforms_24bit(file_name, header_df, records_range):
 
     stream = Stream()
 
-    print('Reading waveform records...')
+    print('Reading waveforms - shru', int(header_df.loc['shru_num'].values))
     for rec_num in tqdm(records_range):
 
         channels = read_waveforms_(file_name, header_df, rec_num)
@@ -169,6 +168,7 @@ def read_waveforms_24bit(file_name, header_df, records_range):
             tr.stats.starttime = tr.stats.starttime + num_points*dt*rec_num
             tr.stats.station = 'CHN0'+str(c+1)
             tr.data = channels[c]
+            tr.detrend('demean')
 
             stream = stream + tr
 
