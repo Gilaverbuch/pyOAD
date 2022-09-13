@@ -21,7 +21,10 @@ import pandas as pd
 from tqdm import tqdm
 
 from obspy import read_inventory, read,  UTCDateTime, Stream, Trace
-from .help_functions_in import header_info_, read_waveforms_, trace_template_
+from .help_functions_in import header_info_, read_waveforms_905_, trace_template_
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 def read_header(file_name):
     '''
@@ -127,8 +130,13 @@ def read_header(file_name):
 
     return header_df
 
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 def read_waveforms(file_name, header_df, records_range):
     '''
@@ -152,10 +160,16 @@ def read_waveforms(file_name, header_df, records_range):
     tr_template = trace_template_(header_df)
     num_points = int(header_df.loc['npts'].values)
     dt = float(header_df.loc['delta'].values)
-
     chan_num = int(header_df.loc['channels'].values)
-
     stream = Stream()
+
+    if header_df.loc['shru_num'].values==905:
+
+        read_waveforms_ = read_waveforms_905_
+
+    elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
+
+        read_waveforms_ = read_waveforms_905_
 
     print('Reading waveforms - shru', int(header_df.loc['shru_num'].values))
     for rec_num in tqdm(records_range):
@@ -178,3 +192,6 @@ def read_waveforms(file_name, header_df, records_range):
 
 
     return stream
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------

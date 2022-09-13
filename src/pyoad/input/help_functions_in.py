@@ -26,6 +26,9 @@ import pandas as pd
 from obspy import  UTCDateTime, Trace
 
 
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
 def header_info_(raw_header):
     '''
     this function reads the header of a SHRU 24bit .DXX acoustic binary file. 
@@ -165,9 +168,81 @@ def header_info_(raw_header):
 
     return header_list
 
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
-def read_waveforms_(file_name, header_df, record_num):
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+def read_waveforms_905_(file_name, header_df, record_num):
+    '''
+    Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
+    
+    parameters
+    ----------
+    file_name: numpy fromfile array
+    header_df: header info in a data frame object
+    record_num: record number (out of 128)
+
+    Returns
+    -------
+    Header structure containing the parameters names and values
+    '''
+
+    f_data = open(file_name, "rb")  # reopen the file
+    data_binary = f_data.read()
+
+    pos = 1024  #skip the length of the header
+    l = int(header_df.loc['reclen'].values) #record length
+    npts = int(header_df.loc['npts'].values)
+
+    chan_num = int(header_df.loc['channels'].values)
+    byte_step = 3
+    pos_step = chan_num*byte_step # every 3 summed into a single data point
+
+    scaling = (2.5/(2**23)/20)
+    sensitivity = 10**(170/20)
+    mPa_2_Pa = 1e-3
+
+    channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
+
+    skip = l-pos
+    if record_num==0:
+        pos1 = pos
+        pos2 = pos1 + l - pos
+    else:
+        
+        pos1 = pos + l*record_num 
+        pos2 = pos1 + l - pos
+
+    for loc in range(pos1,pos2, pos_step):
+
+        for c in range(0,chan_num):
+
+            d = bytearray(data_binary[loc:loc+byte_step])
+            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity * mPa_2_Pa
+            channel[c].append(dpoint)
+            loc+=byte_step
+
+    channels = np.zeros([chan_num, len(channel[0])], dtype=np.float32)
+
+    for c in range(0,chan_num):
+        
+        channels[c] = np.asarray(channel[c], dtype=np.float32)
+
+    return channels
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+def read_waveforms_910917_(file_name, header_df, record_num):
     '''
     Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
     
@@ -242,41 +317,16 @@ def read_waveforms_(file_name, header_df, record_num):
 
 
 
-
-    # if header_df.loc['shru_num'].values==905:
-
-    #     byte_step = 3
-    #     scaling = (2.5/(2**23)/20)
-    #     sensitivity = 10**(170/20)
-
-    #     channels = channels * scaling * sensitivity * mPa_2_Pa
-
-    # elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
-
-    #     byte_step = 2
-    #     scaling = (2.5/8192/20)
-    #     sensitivity = 10**(170/20)
-
-    # # data=data/4;
-    # # gain=4*(data-floor(data));        % mant=floor(data);   "floor" is required due to the nature of negative binary numbers 
-    # # gain=(2*(ones(length(chns),spts))).^(3*gain);        % exp=gain;
-    # # data=floor(data)./gain;
-    # # resol=1./gain; 
-
-    #     channels = channels/4
-    #     gain1 = 4 * (channels - np.floor(channel))
-    #     gain2 =( np.ones(channel.shape) * 2 )**(3*gain1)
-    #     channels = channels/gain2
-
-
-    #     channels = channels * scaling * sensitivity * mPa_2_Pa
-
-
-
     return channels
 
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 
+
+
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 def trace_template_(header_df):
     '''
@@ -304,4 +354,6 @@ def trace_template_(header_df):
 
     return tr
 
+# -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
