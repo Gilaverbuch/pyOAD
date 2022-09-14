@@ -11,6 +11,7 @@ Dependencies:
 - Obspy
 - tqdm
 
+** pip install should install them automatically.
 
 To install run:
 
