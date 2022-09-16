@@ -14,7 +14,6 @@ cd to the package directory and run:
 - pip install dist/the_desired_version.whl
 
 
-
 Dependencies:
 
 - Numpy
@@ -26,5 +25,8 @@ Dependencies:
 - tqdm
 
 ** pip install should install them automatically.
+
+
+Example notebooks can be found in https://github.com/Gilaverbuch/pyoad-notebooks
 
 
