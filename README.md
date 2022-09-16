@@ -1,5 +1,5 @@
 # pyoad
-Python package to read .D binary data format from the Ocean Acoustic and Signals Lab (OASL) at Woods Hole Oceanographic Institution (WHOI).
+Python package to read .D binary data format from the Ocean Acoustic and Signals Lab (OASL) at Woods Hole Oceanographic Institution (WHOI). The package reads different binary formats and converts them to miniSEED (subset of Standard for the Exchange of Earthquake Data (SEED)) that is widely used in seismology and infrasound research.
 
 In a conda environment run:
 
