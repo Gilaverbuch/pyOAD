@@ -44,8 +44,8 @@ def read_data(file_name, records_range):
 
     Returns
     -------
-    Header structure containing the parameters names and values
-
+    Header: header structure containing the parameters names and values (Pandas DataFrame)
+    Waveforms: Obspy Stream object
 
     '''
 
