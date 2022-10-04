@@ -32,15 +32,16 @@ from .output.output import save2mseed_
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_data(file_name, records_range):
+def read_data(file_name, records_range, bit='24bit'):
     '''
-    This function teads the data from a .D 24 bit binary file
+    This function teads the data from a .D 16 or 24 bit binary file
 
 
     parameters
     ----------
         file_name: path to file
         records_range: range of record sections to extact
+        bit: type of binry file. Can get: '24bit', and '16bit'. Default is for 24. Still need to add the pseudo 24 bit.
 
     Returns
     -------
@@ -52,7 +53,7 @@ def read_data(file_name, records_range):
 
     
     Header = read_header(file_name)
-    Waveforms = read_waveforms(file_name, Header, records_range)
+    Waveforms = read_waveforms(file_name, Header, records_range, bit)
 
 
 

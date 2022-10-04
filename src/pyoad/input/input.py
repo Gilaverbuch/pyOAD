@@ -138,7 +138,7 @@ def read_header(file_name):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms(file_name, header_df, records_range):
+def read_waveforms(file_name, header_df, records_range, bit):
     '''
     This function reads the waveforms of a SHRU 24bit .DXX acoustic binary file. 
     One SHRU file nominally contains 128 records, specify a record number 
@@ -150,6 +150,7 @@ def read_waveforms(file_name, header_df, records_range):
     file_name: path to file
     header_df: header info in a data frame object
     records_range: range of record sections to extract
+    bit: type of binry file. Can get: '24bit', and '16bit'. Default is for 24. Still need to add the pseudo 24 bit.
 
     Returns
     -------
@@ -163,13 +164,21 @@ def read_waveforms(file_name, header_df, records_range):
     chan_num = int(header_df.loc['channels'].values)
     stream = Stream()
 
-    if header_df.loc['shru_num'].values==905:
+    # if header_df.loc['shru_num'].values==905:
 
+    #     read_waveforms_ = read_waveforms_24bit_
+
+    # elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
+
+    #     read_waveforms_ = read_waveforms_16bit_
+
+    if bit == '24bit':
         read_waveforms_ = read_waveforms_24bit_
 
-    elif header_df.loc['shru_num'].values==917 or header_df.loc['shru_num'].values==910:
-
+    elif bit == '16bit':
         read_waveforms_ = read_waveforms_16bit_
+
+
 
     print('Reading waveforms - shru', int(header_df.loc['shru_num'].values))
     for rec_num in tqdm(records_range):
