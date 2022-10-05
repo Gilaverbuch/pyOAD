@@ -176,7 +176,7 @@ def header_info_(raw_header):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms_24bit_(file_name, header_df, record_num):
+def read_waveforms_24bit_(file_name, header_df, record_num, sensitivity_):
     '''
     Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
     
@@ -185,6 +185,7 @@ def read_waveforms_24bit_(file_name, header_df, record_num):
     file_name: numpy fromfile array
     header_df: header info in a data frame object
     record_num: record number (out of 128)
+    sensitivity: default is 170. optional to set to different vakue or specify it per channel
 
     Returns
     -------
@@ -203,7 +204,8 @@ def read_waveforms_24bit_(file_name, header_df, record_num):
     pos_step = chan_num*byte_step # every 3 summed into a single data point
 
     scaling = (2.5/(2**23)/20)
-    sensitivity = 10**(170/20)
+    sensitivity = np.zeros(chan_num, dtype=np.float32)
+    sensitivity[:] = 10**(sensitivity_/20)
     mPa_2_Pa = 1e-3
 
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
@@ -222,7 +224,7 @@ def read_waveforms_24bit_(file_name, header_df, record_num):
         for c in range(0,chan_num):
 
             d = bytearray(data_binary[loc:loc+byte_step])
-            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity * mPa_2_Pa
+            dpoint = int.from_bytes(d, byteorder='big', signed=True) * scaling * sensitivity[c] * mPa_2_Pa
             channel[c].append(dpoint)
             loc+=byte_step
 
@@ -242,7 +244,7 @@ def read_waveforms_24bit_(file_name, header_df, record_num):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms_16bit_(file_name, header_df, record_num):
+def read_waveforms_16bit_(file_name, header_df, record_num, sensitivity_):
     '''
     Help function that reads the waveforms of a SHRU 16bit .DXX acoustic binary file.
     
@@ -251,6 +253,7 @@ def read_waveforms_16bit_(file_name, header_df, record_num):
     file_name: numpy fromfile array
     header_df: header info in a data frame object
     record_num: record number (out of 128)
+    sensitivity: default is 170. optional to set to different vakue or specify it per channel
 
     Returns
     -------
@@ -270,7 +273,8 @@ def read_waveforms_16bit_(file_name, header_df, record_num):
 
     
     scaling = (2.5/8192/20)
-    sensitivity = 10**(170/20)
+    sensitivity = np.zeros(chan_num, dtype=np.float32)
+    sensitivity[:] = 10**(sensitivity_/20)
     mPa_2_Pa = 1e-3
     
     channel = [[] for _ in range(chan_num)] # Initially save data as python list and not numpy array because .append to list is much much faster. 
@@ -291,12 +295,6 @@ def read_waveforms_16bit_(file_name, header_df, record_num):
             d = bytearray(data_binary[loc:loc+byte_step])
             dpoint = int.from_bytes(d, byteorder='big', signed=True) 
             
-            ## following Keith's code
-            # dpoint = dpoint/4
-            # mantissa = np.floor(dpoint)
-            # gain = 4*(dpoint - mantissa)
-            # gain = 2**(3*gain)
-            # dpoint = (dpoint/gain) * scaling * sensitivity * mPa_2_Pa
 
             channel[c].append(dpoint)
             loc+=byte_step
@@ -309,12 +307,12 @@ def read_waveforms_16bit_(file_name, header_df, record_num):
         
         channels[c] = np.asarray(channel[c], dtype=np.float32)
 
-    ## following Keith's code faster version
-    channels = channels/4
-    mantissa = np.floor(channels)
-    gain = 4*(channels - mantissa)
-    gain = 2**(3*gain)
-    channels = (channels/gain) * scaling * sensitivity * mPa_2_Pa
+        ## following Keith's code faster version
+        channels[c] = channels[c]/4
+        mantissa = np.floor(channels[c])
+        gain = 4*(channels[c] - mantissa)
+        gain = 2**(3*gain)
+        channels[c] = (channels[c]/gain) * scaling * sensitivity[c] * mPa_2_Pa
 
     return channels
 
