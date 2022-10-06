@@ -42,7 +42,7 @@ def read_data(file_name, records_range, bit='24bit', sensitivity=170):
         file_name: path to file
         records_range: range of record sections to extact
         bit: type of binry file. Can get: '24bit', and '16bit'. Default is for 24. Still need to add the pseudo 24 bit.
-        sensitivity: default is 170. optional to set to different vakue or specify it per channel
+        sensitivity: default is 170. optional to set to different value or specify it per channel
 
     Returns
     -------

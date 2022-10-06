@@ -151,7 +151,7 @@ def read_waveforms(file_name, header_df, records_range, bit, sensitivity):
     header_df: header info in a data frame object
     records_range: range of record sections to extract
     bit: type of binry file. Can get: '24bit', and '16bit'. Default is for 24. Still need to add the pseudo 24 bit.
-    sensitivity: default is 170. optional to set to different vakue or specify it per channel
+    sensitivity: default is 170. optional to set to different value or specify it per channel
 
     Returns
     -------

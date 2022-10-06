@@ -185,7 +185,7 @@ def read_waveforms_24bit_(file_name, header_df, record_num, sensitivity_):
     file_name: numpy fromfile array
     header_df: header info in a data frame object
     record_num: record number (out of 128)
-    sensitivity: default is 170. optional to set to different vakue or specify it per channel
+    sensitivity: default is 170. optional to set to different value or specify it per channel
 
     Returns
     -------
