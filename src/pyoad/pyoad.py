@@ -32,7 +32,7 @@ from .output.output import save2mseed_
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_data(file_name, records_range, bit='24bit', sensitivity=170):
+def read_data(file_name, records_range, bit='24bit', sensitivity=170, gain=20):
     '''
     This function teads the data from a .D 16 or 24 bit binary file
 
@@ -43,6 +43,7 @@ def read_data(file_name, records_range, bit='24bit', sensitivity=170):
         records_range: range of record sections to extact
         bit: type of binry file. Can get: '24bit', and '16bit'. Default is for 24. Still need to add the pseudo 24 bit.
         sensitivity: default is 170. optional to set to different value or specify it per channel
+        gain: default sensor gain is 20
 
     Returns
     -------
@@ -54,7 +55,7 @@ def read_data(file_name, records_range, bit='24bit', sensitivity=170):
 
     
     Header = read_header(file_name)
-    Waveforms = read_waveforms(file_name, Header, records_range, bit, sensitivity)
+    Waveforms = read_waveforms(file_name, Header, records_range, bit, sensitivity, gain)
 
 
 

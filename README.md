@@ -29,6 +29,5 @@ Dependencies:
 
 Example notebooks can be found in https://github.com/Gilaverbuch/pyoad-notebooks
 
-More to come...
 
 

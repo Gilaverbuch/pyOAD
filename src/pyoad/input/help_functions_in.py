@@ -176,7 +176,7 @@ def header_info_(raw_header):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms_24bit_(file_name, header_df, record_num, sensitivity_):
+def read_waveforms_24bit_(file_name, header_df, record_num, sensitivity_, gain_):
     '''
     Help function that reads the waveforms of a SHRU 24bit .DXX acoustic binary file.
     
@@ -203,7 +203,7 @@ def read_waveforms_24bit_(file_name, header_df, record_num, sensitivity_):
     byte_step = 3
     pos_step = chan_num*byte_step # every 3 summed into a single data point
 
-    scaling = (2.5/(2**23)/20)
+    scaling = (2.5/(2**23)/gain_)
     sensitivity = np.zeros(chan_num, dtype=np.float32)
     sensitivity[:] = 10**(sensitivity_/20)
     mPa_2_Pa = 1e-3
@@ -244,7 +244,7 @@ def read_waveforms_24bit_(file_name, header_df, record_num, sensitivity_):
 # -------------------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------
 
-def read_waveforms_16bit_(file_name, header_df, record_num, sensitivity_):
+def read_waveforms_16bit_(file_name, header_df, record_num, sensitivity_, gain_):
     '''
     Help function that reads the waveforms of a SHRU 16bit .DXX acoustic binary file.
     
@@ -254,6 +254,7 @@ def read_waveforms_16bit_(file_name, header_df, record_num, sensitivity_):
     header_df: header info in a data frame object
     record_num: record number (out of 128)
     sensitivity: default is 170. optional to set to different vakue or specify it per channel
+    gain: default sensor gain is 20
 
     Returns
     -------
@@ -272,7 +273,7 @@ def read_waveforms_16bit_(file_name, header_df, record_num, sensitivity_):
     pos_step = chan_num*byte_step # every 3 summed into a single data point
 
     
-    scaling = (2.5/8192/20)
+    scaling = (2.5/8192/gain_)
     sensitivity = np.zeros(chan_num, dtype=np.float32)
     sensitivity[:] = 10**(sensitivity_/20)
     mPa_2_Pa = 1e-3
